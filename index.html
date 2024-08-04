@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculator</title>
+    <style>
+        /* styling for the body */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #808080;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        /* container styling */
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            width: 100%;
+        }
+        /* heading styling */
+        h1 {
+            text-align: center;
+            color: #333;
+            font-size: 1.5em;
+        }
+        /* calculator grid styling */
+        .calculator {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+        /* gouranga-subir */
+        .main {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+        .marq1, .marq2 {
+            font-size: 1.2em;
+            color: #00FFFF;
+        }
+        /* input and button styling */
+        .calculator input, .calculator button {
+            padding: 15px;
+            font-size: 1em;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            text-align: center;
+        }
+        /* button specific styling */
+        .calculator button {
+            background-color: #f0f0f0;
+            cursor: pointer;
+        }
+        .calculator button:active {
+            background-color: #ddd;
+        }
+        /* output display styling */
+        .output {
+            grid-column: span 4;
+            background-color: #e9e9e9;
+            text-align: right;
+        }
+        /* media queries for responsiveness */
+        @media (max-width: 600px) {
+            body {
+                flex-direction: column;
+                justify-content: flex-start;
+                padding-top: 50px;
+            }
+            .container {
+                padding: 15px;
+                max-width: 300px;
+            }
+            .calculator input, .calculator button {
+                padding: 10px;
+                font-size: 0.9em;
+            }
+            .marq1, .marq2 {
+                font-size: 1em;
+            }
+        }
+        @media (max-width: 400px) {
+            .calculator {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .calculator button, .calculator input {
+                padding: 10px;
+                font-size: 0.8em;
+            }
+            .output {
+                grid-column: span 2;
+            }
+            .calculator button[style*="grid-column: span 4"] {
+                grid-column: span 2;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="main">
+        <h1><marquee class="marq1">idol wave</marquee></h1>
+        <div class="container">
+            <h1>Scientific Calculator</h1>
+            <div class="calculator">
+                <!-- output display -->
+                <input type="text" class="output" id="display" disabled>
+                <!-- numeric and operation buttons -->
+                <button onclick="appendNumber('7')">7</button>
+                <button onclick="appendNumber('8')">8</button>
+                <button onclick="appendNumber('9')">9</button>
+                <button onclick="setOperation('/')">/</button>
+                <button onclick="appendNumber('4')">4</button>
+                <button onclick="appendNumber('5')">5</button>
+                <button onclick="appendNumber('6')">6</button>
+                <button onclick="setOperation('*')">*</button>
+                <button onclick="appendNumber('1')">1</button>
+                <button onclick="appendNumber('2')">2</button>
+                <button onclick="appendNumber('3')">3</button>
+                <button onclick="setOperation('-')">-</button>
+                <button onclick="appendNumber('0')">0</button>
+                <button onclick="appendNumber('.')">.</button>
+                <button onclick="calculateResult()">=</button>
+                <button onclick="setOperation('+')">+</button>
+                <!-- clear button spanning all columns -->
+                <button onclick="clearDisplay()" style="grid-column: span 4;">C</button>
+                <!-- scientific function buttons -->
+                <button onclick="setOperation('**')">x<sup>y</sup></button>
+                <button onclick="calculateFunction('sqrt')">√</button>
+                <button onclick="calculateFunction('log')">log</button>
+                <button onclick="calculateFunction('ln')">ln</button>
+                <button onclick="calculateFunction('sin')">sin</button>
+                <button onclick="calculateFunction('cos')">cos</button>
+                <button onclick="calculateFunction('tan')">tan</button>
+                <button onclick="calculateFunction('exp')">e<sup>x</sup></button>
+            </div>
+        </div>
+        <h1><marquee class="marq2"> Calculator</marquee></h1>
+    </div>
+
+    <script>
+        let display = document.getElementById('display'); // display element
+        let currentOperation = null; // current operation
+        let firstOperand = ''; // first operand
+        let secondOperand = ''; // second operand
+        let isSecondOperand = false; // flag for second operand
+
+        // function to append number to display
+        function appendNumber(number) {
+            if (isSecondOperand) {
+                secondOperand += number;
+            } else {
+                firstOperand += number;
+            }
+            display.value += number;
+        }
+
+        // function to set the operation
+        function setOperation(operation) {
+            if (currentOperation && isSecondOperand) {
+                calculateResult(); // calculate result if there's already an operation
+            }
+            currentOperation = operation;
+            display.value += operation;
+            isSecondOperand = true;
+        }
+
+        // function to calculate the result
+        function calculateResult() {
+            if (currentOperation && isSecondOperand && secondOperand) {
+                const expression = firstOperand + currentOperation + secondOperand;
+                const result = eval(expression); // evaluate the expression
+                display.value = `${expression}=${result}`;
+                firstOperand = result.toString();
+                secondOperand = '';
+                currentOperation = null;
+                isSecondOperand = false;
+            }
+        }
+
+        // function to calculate scientific functions
+        function calculateFunction(func) {
+            let value = parseFloat(display.value);
+            let result;
+            switch (func) {
+                case 'sqrt':
+                    result = Math.sqrt(value);
+                    break;
+                case 'log':
+                    result = Math.log10(value);
+                    break;
+                case 'ln':
+                    result = Math.log(value);
+                    break;
+                case 'sin':
+                    result = Math.sin(value);
+                    break;
+                case 'cos':
+                    result = Math.cos(value);
+                    break;
+                case 'tan':
+                    result = Math.tan(value);
+                    break;
+                case 'exp':
+                    result = Math.exp(value);
+                    break;
+                default:
+                    result = value;
+            }
+            display.value = `${func}(${value})=${result}`;
+            firstOperand = result.toString();
+            secondOperand = '';
+            currentOperation = null;
+            isSecondOperand = false;
+        }
+
+        // function to clear the display
+        function clearDisplay() {
+            display.value = '';
+            firstOperand = '';
+            secondOperand = '';
+            currentOperation = null;
+            isSecondOperand = false;
+        }
+    </script>
+</body>
+</html>
